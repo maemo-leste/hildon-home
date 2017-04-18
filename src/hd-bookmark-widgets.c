@@ -29,7 +29,6 @@
 #include <hildon/hildon.h>
 
 #include <gconf/gconf-client.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 #include <libhildondesktop/libhildondesktop.h>
 
@@ -60,7 +59,7 @@ struct _HDBookmarkWidgetsPrivate
 {
   GtkTreeModel *model;
 
-  GnomeVFSMonitorHandle *user_bookmarks_handle;
+  GFileMonitor *user_bookmarks_monitor;
 
   guint parse_idle_id;
 };
@@ -181,11 +180,11 @@ hd_bookmark_widgets_parse_bookmark_files (HDBookmarkWidgets *widgets)
 }
 
 static void
-hd_bookmark_widgets_bookmark_files_changed (GnomeVFSMonitorHandle *handle,
-                                            const gchar *monitor_uri,
-                                            const gchar *info_uri,
-                                            GnomeVFSMonitorEventType event_type,
-                                            gpointer user_data)
+hd_bookmark_widgets_bookmark_files_changed (GFileMonitor     *monitor,
+                                            GFile            *file,
+                                            GFile            *other_file,
+                                            GFileMonitorEvent event_type,
+                                            gpointer          user_data)
 {
   HDBookmarkWidgets *widgets = HD_BOOKMARK_WIDGETS (user_data);
   HDBookmarkWidgetsPrivate *priv = widgets->priv;
@@ -201,8 +200,9 @@ static void
 hd_bookmark_widgets_constructed (GObject *object)
 {
   HDBookmarkWidgetsPrivate *priv = HD_BOOKMARK_WIDGETS (object)->priv;
-  gchar *user_bookmarks, *user_bookmarks_uri;
-  GnomeVFSResult result;
+  gchar *user_bookmarks;
+  GFile *user_bookmarks_uri;
+  GError *error = NULL;
 
   if (G_OBJECT_CLASS (hd_bookmark_widgets_parent_class)->constructed)
     G_OBJECT_CLASS (hd_bookmark_widgets_parent_class)->constructed (object);
@@ -213,21 +213,30 @@ hd_bookmark_widgets_constructed (GObject *object)
   user_bookmarks = g_build_filename (g_get_home_dir (),
                                      MYBOOKMARKS,
                                      NULL);
-  user_bookmarks_uri = gnome_vfs_get_uri_from_local_path (user_bookmarks);
+  user_bookmarks_uri = g_file_new_for_path (user_bookmarks);
 
-  result = gnome_vfs_monitor_add (&priv->user_bookmarks_handle,
-                                  user_bookmarks_uri,
-                                  GNOME_VFS_MONITOR_FILE,
-                                  hd_bookmark_widgets_bookmark_files_changed,
-                                  object);
-  if (result != GNOME_VFS_OK)
-    g_debug ("Could not add monitor for user bookmark file. %s", gnome_vfs_result_to_string (result));
+  priv->user_bookmarks_monitor = g_file_monitor_file (user_bookmarks_uri,
+                                                      G_FILE_MONITOR_NONE,
+                                                      NULL, &error);
+  if (error)
+    {
+      g_debug ("Could not add monitor for user bookmark file. %s",
+               error->message);
+      g_error_free (error);
+    }
+  else
+    {
+      g_signal_connect (priv->user_bookmarks_monitor, "changed",
+                        G_CALLBACK (hd_bookmark_widgets_bookmark_files_changed),
+                        object);
+    }
 
-  priv->parse_idle_id = gdk_threads_add_idle ((GSourceFunc) hd_bookmark_widgets_parse_bookmark_files,
-                                              object);
+  priv->parse_idle_id = gdk_threads_add_idle (
+                          (GSourceFunc)
+                          hd_bookmark_widgets_parse_bookmark_files, object);
 
+  g_object_unref (user_bookmarks_uri);
   g_free (user_bookmarks);
-  g_free (user_bookmarks_uri);
 }
 
 static void
@@ -252,8 +261,12 @@ hd_bookmark_widgets_dipose (GObject *object)
   if (priv->model)
     priv->model = (g_object_unref (priv->model), NULL);
 
-  if (priv->user_bookmarks_handle)
-    priv->user_bookmarks_handle = (gnome_vfs_monitor_cancel (priv->user_bookmarks_handle), NULL);
+  if (priv->user_bookmarks_monitor)
+    {
+      g_file_monitor_cancel (priv->user_bookmarks_monitor);
+      g_object_unref (priv->user_bookmarks_monitor);
+      priv->user_bookmarks_monitor = NULL;
+    }
 
   if (priv->parse_idle_id)
     {

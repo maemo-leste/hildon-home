@@ -34,12 +34,12 @@
 #include "hd-notification-manager-glue.h"
 #include "hd-marshal.h"
 
-#include <libgnomevfs/gnome-vfs.h>
-
 #include <string.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <sqlite3.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 /* To trace _db-related things. */
 #if 0
@@ -217,7 +217,7 @@ hd_notification_manager_load_hint (void *data,
         {
           gint64 value_i64;
 
-          sscanf (argv[2], "%Ld", &value_i64);
+          sscanf (argv[2], G_GINT64_FORMAT, &value_i64);
           g_value_init (value, G_TYPE_INT64);
           g_value_set_int64 (value, value_i64);
           break;
@@ -688,7 +688,7 @@ hd_notification_manager_db_insert_hint (gpointer key, gpointer value,
       break;
     default:
       g_warning ("Hint `%s' of notification %d has invalid value type %u",
-                 hkey, hinfo->id, G_VALUE_TYPE (hvalue));
+                 hkey, hinfo->id, (unsigned int)G_VALUE_TYPE (hvalue));
       hinfo->result = SQLITE_ERROR;
       return;
     }
@@ -939,7 +939,8 @@ hd_notification_manager_init (HDNotificationManager *nm)
 
   nm->priv = HD_NOTIFICATION_MANAGER_GET_PRIVATE (nm);
 
-  nm->priv->mutex = g_mutex_new ();
+  nm->priv->mutex = g_new (GMutex, 1);
+  g_mutex_init (nm->priv->mutex);
 
   nm->priv->current_id = 0;
 
@@ -1015,10 +1016,9 @@ hd_notification_manager_init (HDNotificationManager *nm)
   else
     {
       /* User config dir could not be created */
-      result = gnome_vfs_result_from_errno ();
       g_warning ("Could not mkdir '%s', %s",
                  config_dir,
-                 gnome_vfs_result_to_string (result));
+                 strerror (errno));
     }
 
   g_free (config_dir);
@@ -1041,7 +1041,11 @@ hd_notification_manager_finalize (GObject *object)
   HDNotificationManagerPrivate *priv = HD_NOTIFICATION_MANAGER (object)->priv;
 
   if (priv->mutex)
-    priv->mutex = (g_mutex_free (priv->mutex), NULL);
+    {
+      g_mutex_clear (priv->mutex);
+      g_free (priv->mutex);
+      priv->mutex = NULL;
+    }
 
   if (priv->db)
     {
@@ -1218,7 +1222,7 @@ hd_notification_manager_notify (HDNotificationManager *nm,
   gint i;
   HDNotification *notification;
   gboolean replace = FALSE;
-  const gchar *category;
+  /* const gchar *category; */
 
 /*  g_return_val_if_fail (summary != '\0', FALSE);
   g_return_val_if_fail (body != '\0', FALSE);*/
@@ -1235,8 +1239,8 @@ hd_notification_manager_notify (HDNotificationManager *nm,
     persistent = FALSE;
 
   /* Get "category" hint */
-  hint = g_hash_table_lookup (hints, "category");
-  category = G_VALUE_HOLDS_STRING (hint) ? g_value_get_string (hint) : NULL;
+  /* hint = g_hash_table_lookup (hints, "category");
+  category = G_VALUE_HOLDS_STRING (hint) ? g_value_get_string (hint) : NULL; */
 
   /* Try to find an existing notification */
   if (id)

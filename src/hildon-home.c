@@ -26,7 +26,6 @@
 #endif
 
 #include <glib/gstdio.h>
-#include <libgnomevfs/gnome-vfs.h>
 #include <libhildondesktop/libhildondesktop.h>
 #include <hildon/hildon.h>
 #include <gconf/gconf-client.h>
@@ -315,8 +314,12 @@ main (int argc, char **argv)
   textdomain (GETTEXT_PACKAGE);
 
   /* Initialize threads */
+#if !GLIB_CHECK_VERSION(2,32,0)
+#ifdef G_THREADS_ENABLED
   if (!g_thread_supported ())
     g_thread_init (NULL);
+#endif
+#endif
 
   /* Ignore debug output */
   g_log_set_default_handler (log_ignore_debug_handler, NULL);
@@ -330,9 +333,6 @@ main (int argc, char **argv)
 
   /* Initialize Hildon */
   hildon_init ();
-
-  /* Initialize GnomeVFS */
-  gnome_vfs_init ();
 
   /* Add handler for signals */
   signal (SIGINT,  signal_handler);

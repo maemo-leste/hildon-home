@@ -36,9 +36,8 @@
 
 #include <gconf/gconf-client.h>
 
-#include <libgnomevfs/gnome-vfs.h>
-
 #include <unistd.h>
+#include <errno.h>
 
 #include "hd-background-info.h"
 #include "hd-command-thread-pool.h"
@@ -98,8 +97,9 @@ struct _HDBackgroundsPrivate
   guint set_theme_idle_id;
 
   GVolumeMonitor *volume_monitor;
+#ifdef UPSTREAM_DISABLED
   GnomeVFSVolumeMonitor *volume_monitor2;
-
+#endif
   gboolean portrait_wallpaper;
 };
 
@@ -435,7 +435,7 @@ get_current_theme (void)
     {
       g_warning ("%s. Could not read current theme. %s",
                  __FUNCTION__,
-                 gnome_vfs_result_to_string (gnome_vfs_result_from_errno ()));
+                 strerror (errno));
       g_free (current_theme);
       return NULL;
     }
@@ -790,7 +790,7 @@ mount_pre_unmount_cb (GVolumeMonitor *monitor,
       gtk_widget_show (note);
     }
 }
-
+#ifdef UPSTREAM_DISABLED
 static void
 volume_pre_unmount_cb (GnomeVFSVolumeMonitor *monitor,
                        GnomeVFSVolume        *volume,
@@ -835,7 +835,7 @@ volume_pre_unmount_cb (GnomeVFSVolumeMonitor *monitor,
       gtk_widget_show (note);
     }
 }
-
+#endif
 static void
 hd_backgrounds_init (HDBackgrounds *backgrounds)
 {
@@ -854,10 +854,11 @@ hd_backgrounds_init (HDBackgrounds *backgrounds)
   g_signal_connect (priv->volume_monitor, "mount-pre-unmount",
                     G_CALLBACK (mount_pre_unmount_cb), backgrounds);
 
+#ifdef UPSTREAM_DISABLED
   priv->volume_monitor2 = gnome_vfs_get_volume_monitor ();
   g_signal_connect (priv->volume_monitor2, "volume-pre-unmount",
                     G_CALLBACK (volume_pre_unmount_cb), backgrounds);
-
+#endif
   priv->portrait_wallpaper = gconf_client_get_bool (priv->gconf_client, GCONF_KEY_PORTRAIT_WALLPAPER, NULL);
 
 }

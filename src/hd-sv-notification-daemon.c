@@ -318,7 +318,9 @@ main (int argc, char **argv)
   /* Ignore debug output */
   g_log_set_default_handler (log_ignore_debug_handler, NULL);
 
+#if !GLIB_CHECK_VERSION(2,35,0)
   g_type_init ();
+#endif
 
   hd_sv_notification_daemon = g_object_new (HD_TYPE_SV_NOTIFICATION_DAEMON,
                                             NULL);

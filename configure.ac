@@ -71,11 +71,11 @@ PKG_CHECK_MODULES(HILDON_HOME,
                   [hildon-1		>= 2.1.4	dnl
 		   hildon-fm-2		>= 2.0.9	dnl
                    libhildondesktop-1	>= 2.1.37	dnl
-		   gnome-vfs-2.0	>= 2.8.3	dnl
 		   sqlite3				dnl
 		   osso-bookmark-engine			dnl
 		   mce 					dnl
 		   libosso                              dnl
+		   x11                                  dnl
 		   hildon-thumbnail])
 
 AC_SUBST(HILDON_HOME_LIBS)
