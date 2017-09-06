@@ -101,7 +101,7 @@ can_add_shortcut_notify (DBusGProxy     *proxy,
       g_error_free (error);
       
       gtk_widget_hide (priv->select_contacts_button);
-    }  
+    }
 }
 
 static gboolean
@@ -142,7 +142,7 @@ hd_edit_mode_menu_show (GtkWidget *widget)
     }
 
   /* Update Add contact button */
-  gtk_widget_show (priv->select_contacts_button);
+  gtk_widget_hide (priv->select_contacts_button);
   dbus_g_proxy_begin_call_with_timeout (priv->contact_proxy,
                                         CONTACT_DBUS_CAN_ADD_SHORTCUT,
                                         (DBusGProxyCallNotify) can_add_shortcut_notify,
