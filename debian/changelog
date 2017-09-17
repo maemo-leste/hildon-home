@@ -1,3 +1,9 @@
+hildon-home (0.3.71-10) unstable; urgency=medium
+
+  * enable git builds
+
+ -- Ivan J. <parazyd@dyne.org>  Sun, 17 Sep 2017 21:11:00 +0200
+
 hildon-home (0.3.71-10) unstable; urgency=low
 
   * Remove depracted GConf key.
