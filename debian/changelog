@@ -1,3 +1,10 @@
+hildon-home (0.3.72) unstable; urgency=medium
+
+  * Disable -Werror due to deprecation warnings.
+    See: https://github.com/maemo-leste/bugtracker/issues/32
+
+ -- Ivan J. <parazyd@dyne.org>  Wed, 10 Jan 2018 21:03:00 +0100
+
 hildon-home (0.3.71-10) unstable; urgency=medium
 
   * enable git builds
