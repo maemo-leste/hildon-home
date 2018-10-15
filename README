@@ -1,7 +1,34 @@
-General Information
-===================
+The Hildon Home application
+===========================
 
-The Hildon Home application. For the notification plugins and home aplplets APIs see libhildondesktop.
+The hildon-home process implements loading of Home applets, notification
+service, and loading of Home background images. There are multiple Home
+views, and the user can select between them by horizontally scrolling
+the screen. Each of the views can have a different set of dynamically
+loaded Home applets, a small Gtk+ applications with their own, possibly
+transparent, X window displayed on top of the Home background. Home has
+a layout mode in which the applet windows can be moved, resized, and
+dragged to a neighbouring Home view.
+
+Hildon-desktop handles positioning and displaying of the Home applets
+and background pictures according to the currently selected Home view.
+hildon-desktop also implements the Home layout mode in cooperation with
+hildon-home. Home flags the applet windows with specific window
+properties to tell hildon-desktop to handle them in a special way. Home
+also stores the applet positions and the Home view where they are active
+to GConf for hildon-desktop.
+
+Hildon-home provides a service on the D-Bus session bus to display
+notifications on the screen, based on a proposed freedesktop.org Desktop
+Notification Specification. Typical notifications are incoming e-mails,
+chat messages, and missed phone calls. The service supports persistent
+notifications that are retained over a reboot, simple dialogs with
+return values, and queueing of notifications. It is also possible to
+install plugins for the notification service, e.g. to support sound and
+vibration effects in connection to notifications.
+
+For the notification plugins and home applets APIs see libhildondesktop.
+
 
 Requirements
 ============
