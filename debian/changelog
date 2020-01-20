@@ -1,3 +1,9 @@
+hildon-home (0.3.73) unstable; urgency=medium
+
+  * Port to newer gtk2 interface
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Mon, 20 Jan 2020 15:03:11 +0100
+
 hildon-home (0.3.72) unstable; urgency=medium
 
   * Disable -Werror due to deprecation warnings.
