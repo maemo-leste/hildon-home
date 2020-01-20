@@ -28,16 +28,12 @@
 
 #include "hd-background.h"
 
-#define HD_BACKGROUND_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_BACKGROUND, HDBackgroundPrivate))
-
-
 struct _HDBackgroundPrivate
 {
   HildonThumbnailFactory *thumbnail_factory;
 };
 
-G_DEFINE_ABSTRACT_TYPE (HDBackground, hd_background, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDBackground, hd_background, G_TYPE_OBJECT, G_ADD_PRIVATE(HDBackground));
 
 static void
 hd_background_dispose (GObject *object)
@@ -56,14 +52,12 @@ hd_background_class_init (HDBackgroundClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->dispose = hd_background_dispose;
-
-  g_type_class_add_private (klass, sizeof (HDBackgroundPrivate));
 }
 
 static void
 hd_background_init (HDBackground *background)
 {
-  HDBackgroundPrivate *priv = HD_BACKGROUND_GET_PRIVATE (background);
+  HDBackgroundPrivate *priv = (HDBackgroundPrivate*)hd_background_get_instance_private(background);
 
   background->priv = priv;
 

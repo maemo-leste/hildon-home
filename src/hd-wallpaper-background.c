@@ -63,9 +63,6 @@ typedef struct
   GCancellable *cancellable;
 } CommandData;
 
-#define HD_WALLPAPER_BACKGROUND_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_WALLPAPER_BACKGROUND, HDWallpaperBackgroundPrivate))
-
 static void hd_wallpaper_background_set_for_current_view (HDBackground   *background,
                                                           guint           view,
                                                           GCancellable   *cancellable);
@@ -87,7 +84,7 @@ static CommandData* command_data_new  (GFile        *file,
                                        GCancellable *cancellable);
 static void         command_data_free (CommandData  *data);
 
-G_DEFINE_TYPE (HDWallpaperBackground, hd_wallpaper_background, HD_TYPE_BACKGROUND);
+G_DEFINE_TYPE_WITH_CODE (HDWallpaperBackground, hd_wallpaper_background, HD_TYPE_BACKGROUND, G_ADD_PRIVATE(HDWallpaperBackground));
 
 static void
 hd_wallpaper_background_class_init (HDWallpaperBackgroundClass *klass)
@@ -110,7 +107,6 @@ hd_wallpaper_background_class_init (HDWallpaperBackgroundClass *klass)
                                                         G_TYPE_FILE,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDWallpaperBackgroundPrivate));
 }
 
 static void
@@ -188,7 +184,7 @@ cleanup:
 static void
 hd_wallpaper_background_init (HDWallpaperBackground *background)
 {
-  background->priv = HD_WALLPAPER_BACKGROUND_GET_PRIVATE (background);
+  background->priv = (HDWallpaperBackgroundPrivate*)hd_wallpaper_background_get_instance_private(background);
 }
 
 HDBackground *

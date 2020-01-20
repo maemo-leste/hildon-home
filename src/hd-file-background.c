@@ -53,9 +53,6 @@ typedef struct
   gboolean update_gconf;
 } CommandData;
 
-#define HD_FILE_BACKGROUND_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_FILE_BACKGROUND, HDFileBackgroundPrivate))
-
 static void hd_file_background_set_for_current_view (HDBackground   *background,
                                                      guint           view,
                                                      GCancellable   *cancellable);
@@ -80,7 +77,7 @@ static CommandData* command_data_new  (GFile        *file,
                                        gboolean      update_gconf);
 static void         command_data_free (CommandData  *data);
 
-G_DEFINE_TYPE (HDFileBackground, hd_file_background, HD_TYPE_BACKGROUND);
+G_DEFINE_TYPE_WITH_CODE (HDFileBackground, hd_file_background, HD_TYPE_BACKGROUND, G_ADD_PRIVATE(HDFileBackground));
 
 static void
 hd_file_background_class_init (HDFileBackgroundClass *klass)
@@ -103,7 +100,6 @@ hd_file_background_class_init (HDFileBackgroundClass *klass)
                                                         G_TYPE_FILE,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDFileBackgroundPrivate));
 }
 
 static void
@@ -213,7 +209,7 @@ cleanup:
 static void
 hd_file_background_init (HDFileBackground *background)
 {
-  background->priv = HD_FILE_BACKGROUND_GET_PRIVATE (background);
+  background->priv = (HDFileBackgroundPrivate*)hd_file_background_get_instance_private(background);
 }
 
 HDBackground *

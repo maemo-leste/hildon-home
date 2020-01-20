@@ -27,9 +27,6 @@
 
 #include "hd-command-thread-pool.h"
 
-#define HD_COMMAND_THREAD_POOL_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_COMMAND_THREAD_POOL, HDCommandThreadPoolPrivate))
-
 typedef struct
 {
   HDCommandCallback command;
@@ -64,7 +61,7 @@ struct _HDCommandThreadPoolPrivate
   GThreadPool *thread_pool;
 };
 
-G_DEFINE_TYPE (HDCommandThreadPool, hd_command_thread_pool, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDCommandThreadPool, hd_command_thread_pool, G_TYPE_OBJECT, G_ADD_PRIVATE(HDCommandThreadPool));
 
 static void
 hd_command_thread_pool_dipose (GObject *object)
@@ -89,7 +86,6 @@ hd_command_thread_pool_class_init (HDCommandThreadPoolClass *klass)
 
   object_class->dispose = hd_command_thread_pool_dipose;
 
-  g_type_class_add_private (klass, sizeof (HDCommandThreadPoolPrivate));
 }
 
 static void
@@ -97,7 +93,7 @@ hd_command_thread_pool_init (HDCommandThreadPool *command_thread_pool)
 {
   HDCommandThreadPoolPrivate *priv;
 
-  priv = HD_COMMAND_THREAD_POOL_GET_PRIVATE (command_thread_pool);
+  priv = hd_command_thread_pool_get_instance_private(command_thread_pool);
   command_thread_pool->priv = priv;
 
   priv->thread_pool = g_thread_pool_new ((GFunc) thread_command_execute,

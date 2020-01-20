@@ -31,9 +31,6 @@
 
 #include "hd-led-pattern.h"
 
-#define HD_LED_PATTERN_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_LED_PATTERN, HDLedPatternPrivate))
-
 struct _HDLedPatternPrivate
 {
   gchar *name;
@@ -62,7 +59,7 @@ static void            deactivate_pattern (HDLedPattern *pattern);
 static GHashTable      *get_pattern_map            (void);
 static DBusGProxy      *get_mce_proxy              (void);
 
-G_DEFINE_TYPE (HDLedPattern, hd_led_pattern, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDLedPattern, hd_led_pattern, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDLedPattern));
 
 HDLedPattern *
 hd_led_pattern_get (const gchar *name)
@@ -111,7 +108,6 @@ hd_led_pattern_class_init (HDLedPatternClass *klass)
   object_class->set_property = hd_led_pattern_set_property;
   object_class->constructed = hd_led_pattern_constructed;
 
-  g_type_class_add_private (klass, sizeof (HDLedPatternPrivate));
 
   g_object_class_install_property (object_class,
                                    PROP_NAME,
@@ -125,7 +121,7 @@ hd_led_pattern_class_init (HDLedPatternClass *klass)
 static void
 hd_led_pattern_init (HDLedPattern *pattern)
 {
-  pattern->priv = HD_LED_PATTERN_GET_PRIVATE (pattern);
+  pattern->priv = (HDLedPatternPrivate*)hd_led_pattern_get_instance_private(pattern);
 }
 
 static void

@@ -64,9 +64,6 @@
 /* GConf path for boomarks */
 #define BOOKMARKS_GCONF_PATH      "/apps/osso/hildon-home/bookmarks"
 
-#define HD_BOOKMARK_SHORTCUT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj,\
-                                                                            HD_TYPE_BOOKMARK_SHORTCUT,\
-                                                                            HDBookmarkShortcutPrivate))
 
 struct _HDBookmarkShortcutPrivate
 {
@@ -86,7 +83,7 @@ struct _HDBookmarkShortcutPrivate
   cairo_surface_t *thumb_mask;
 };
 
-G_DEFINE_TYPE (HDBookmarkShortcut, hd_bookmark_shortcut, HD_TYPE_HOME_PLUGIN_ITEM);
+G_DEFINE_TYPE_WITH_CODE (HDBookmarkShortcut, hd_bookmark_shortcut, HD_TYPE_HOME_PLUGIN_ITEM, G_ADD_PRIVATE(HDBookmarkShortcut));
 
 static inline gchar *
 get_gconf_key (const gchar *plugin_id,
@@ -546,7 +543,6 @@ hd_bookmark_shortcut_class_init (HDBookmarkShortcutClass *klass)
   object_class->dispose = hd_bookmark_shortcut_dispose;
   object_class->finalize = hd_bookmark_shortcut_finalize;
 
-  g_type_class_add_private (klass, sizeof (HDBookmarkShortcutPrivate));
 }
 
 static gboolean
@@ -625,7 +621,7 @@ hd_bookmark_shortcut_init (HDBookmarkShortcut *applet)
   HDBookmarkShortcutPrivate *priv;
   GtkWidget *alignment;
 
-  priv = HD_BOOKMARK_SHORTCUT_GET_PRIVATE (applet);
+  priv = hd_bookmark_shortcut_get_instance_private(applet);
   applet->priv = priv;
 
   gtk_widget_add_events (GTK_WIDGET (applet),

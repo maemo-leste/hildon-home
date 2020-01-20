@@ -65,9 +65,6 @@ typedef struct
 /* gconf key */
 #define HD_GCONF_KEY_ACTIVE_VIEWS "/apps/osso/hildon-desktop/views/active"
 
-#define HD_IMAGESET_BACKGROUND_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_IMAGESET_BACKGROUND, HDImagesetBackgroundPrivate))
-
 static void hd_imageset_background_set_for_current_view (HDBackground   *background,
                                                          guint           view,
                                                          GCancellable   *cancellable);
@@ -99,7 +96,7 @@ static CommandData* command_data_new  (GFile        *file,
                                        GCancellable *cancellable);
 static void         command_data_free (CommandData  *data);
 
-G_DEFINE_TYPE (HDImagesetBackground, hd_imageset_background, HD_TYPE_BACKGROUND);
+G_DEFINE_TYPE_WITH_CODE (HDImagesetBackground, hd_imageset_background, HD_TYPE_BACKGROUND, G_ADD_PRIVATE(HDImagesetBackground));
 
 static void
 hd_imageset_background_class_init (HDImagesetBackgroundClass *klass)
@@ -122,7 +119,6 @@ hd_imageset_background_class_init (HDImagesetBackgroundClass *klass)
                                                         G_TYPE_FILE,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDImagesetBackgroundPrivate));
 }
 
 static void
@@ -227,7 +223,7 @@ hd_imageset_background_get_image_file_for_view (HDBackground *background,
 static void
 hd_imageset_background_init (HDImagesetBackground *background)
 {
-  background->priv = HD_IMAGESET_BACKGROUND_GET_PRIVATE (background);
+  background->priv = (HDImagesetBackgroundPrivate*)hd_imageset_background_get_instance_private(background);
 
   background->priv->image_files = hd_object_vector_new ();
 }

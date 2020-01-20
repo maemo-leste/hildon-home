@@ -64,11 +64,6 @@
 #define DB_BIND_INT64(val)              G_TYPE_INT64,   val
 #define DB_BIND_END                     G_TYPE_INVALID
 
-#define HD_NOTIFICATION_MANAGER_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_NOTIFICATION_MANAGER, HDNotificationManagerPrivate))
-
-G_DEFINE_TYPE (HDNotificationManager, hd_notification_manager, G_TYPE_OBJECT);
-
 enum {
     NOTIFIED,
     N_SIGNALS
@@ -110,6 +105,9 @@ struct _HDNotificationManagerPrivate
   gulong           commit_callback;
 
 };
+
+G_DEFINE_TYPE_WITH_CODE (HDNotificationManager, hd_notification_manager, G_TYPE_OBJECT, G_ADD_PRIVATE(HDNotificationManager));
+
 
 /* IPC structure between _insert_hints() and _insert_hint(). */
 typedef struct 
@@ -937,7 +935,7 @@ hd_notification_manager_init (HDNotificationManager *nm)
   gchar *config_dir;
   guint result;
 
-  nm->priv = HD_NOTIFICATION_MANAGER_GET_PRIVATE (nm);
+  nm->priv = (HDNotificationManagerPrivate*)hd_notification_manager_get_instance_private(nm);
 
   nm->priv->mutex = g_new (GMutex, 1);
   g_mutex_init (nm->priv->mutex);
@@ -1087,7 +1085,6 @@ hd_notification_manager_class_init (HDNotificationManagerClass *class)
                   G_TYPE_NONE, 2,
                   HD_TYPE_NOTIFICATION, G_TYPE_BOOLEAN);
 
-  g_type_class_add_private (class, sizeof (HDNotificationManagerPrivate));
 }
 
 static DBusMessage *

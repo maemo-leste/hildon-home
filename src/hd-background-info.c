@@ -36,9 +36,6 @@
 #define BACKGROUND_INFO_KEY_FILE_FMT "File-%u"
 #define BACKGROUND_INFO_KEY_ETAG_FMT "Etag-%u"
 
-#define HD_BACKGROUND_INFO_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_BACKGROUND_INFO, HDBackgroundInfoPrivate))
-
 struct _HDBackgroundInfoPrivate
 {
   GPtrArray *etags;
@@ -71,7 +68,7 @@ static void load_background_info_legacy (HDBackgroundInfo *info,
                                          gsize             file_size);
 static void save_background_info_file (HDBackgroundInfo *info);
 
-G_DEFINE_TYPE (HDBackgroundInfo, hd_background_info, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDBackgroundInfo, hd_background_info, G_TYPE_OBJECT, G_ADD_PRIVATE(HDBackgroundInfo));
 
 static void
 hd_background_info_class_init (HDBackgroundInfoClass *klass)
@@ -80,14 +77,13 @@ hd_background_info_class_init (HDBackgroundInfoClass *klass)
 
   object_class->dispose = hd_background_info_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDBackgroundInfoPrivate));
 }
 
 static void
 hd_background_info_init (HDBackgroundInfo *info)
 {
   HDBackgroundInfoPrivate *priv;
-  priv = info->priv = HD_BACKGROUND_INFO_GET_PRIVATE (info);
+  priv = info->priv = (HDBackgroundInfoPrivate*)hd_background_info_get_instance_private(info);
 
   guint max = HD_DESKTOP_VIEWS;
   if(hd_backgrounds_is_portrait_wallpaper_enabled (hd_backgrounds_get ()))

@@ -38,16 +38,13 @@
 
 #include "hd-system-notifications.h"
 
-#define HD_SYSTEM_NOTIFICATIONS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_SYSTEM_NOTIFICATIONS, HDSystemNotificationsPrivate))
-
 struct _HDSystemNotificationsPrivate
 {
   HDNotificationManager *nm;
   GQueue                *dialog_queue;
 };
 
-G_DEFINE_TYPE (HDSystemNotifications, hd_system_notifications, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDSystemNotifications, hd_system_notifications, G_TYPE_OBJECT, G_ADD_PRIVATE(HDSystemNotifications));
 
 static GtkWidget *
 create_note_infoprint (const gchar *summary, 
@@ -261,13 +258,12 @@ hd_system_notifications_class_init (HDSystemNotificationsClass *klass)
 
   object_class->dispose = hd_system_notifications_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDSystemNotificationsPrivate));
 }
 
 static void
 hd_system_notifications_init (HDSystemNotifications *sn)
 {
-  sn->priv = HD_SYSTEM_NOTIFICATIONS_GET_PRIVATE (sn);
+  sn->priv = (HDSystemNotificationsPrivate*)hd_system_notifications_get_instance_private(sn);
 
   sn->priv->dialog_queue = g_queue_new ();
 }

@@ -44,9 +44,6 @@
 #define BACKGROUND_ACTIVE_IMAGE_FILE IMAGES_DIR "ApplicationShortcutAppletPressed.png"
 
 /* Private definitions */
-#define HD_TASK_SHORTCUT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE (obj,\
-                                                                        HD_TYPE_TASK_SHORTCUT,\
-                                                                        HDTaskShortcutPrivate))
 
 struct _HDTaskShortcutPrivate
 {
@@ -58,7 +55,7 @@ struct _HDTaskShortcutPrivate
   cairo_surface_t *bg_active;
 };
 
-G_DEFINE_TYPE (HDTaskShortcut, hd_task_shortcut, HD_TYPE_HOME_PLUGIN_ITEM);
+G_DEFINE_TYPE_WITH_CODE (HDTaskShortcut, hd_task_shortcut, HD_TYPE_HOME_PLUGIN_ITEM, G_ADD_PRIVATE(HDTaskShortcut));
 
 
 static void
@@ -257,7 +254,6 @@ hd_task_shortcut_class_init (HDTaskShortcutClass *klass)
   widget_class->expose_event = hd_task_shortcut_expose_event;
   widget_class->show = hd_task_shortcut_show;
 
-  g_type_class_add_private (klass, sizeof (HDTaskShortcutPrivate));
 }
 
 static gboolean
@@ -327,7 +323,7 @@ hd_task_shortcut_init (HDTaskShortcut *applet)
   HDTaskShortcutPrivate *priv;
   GtkWidget *alignment;
 
-  priv = HD_TASK_SHORTCUT_GET_PRIVATE (applet);
+  priv = hd_task_shortcut_get_instance_private(applet);
   applet->priv = priv;
 
   gtk_widget_add_events (GTK_WIDGET (applet),

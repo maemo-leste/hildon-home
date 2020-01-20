@@ -34,9 +34,6 @@
 
 #include "hd-available-backgrounds.h"
 
-#define HD_AVAILABLE_BACKGROUNDS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_AVAILABLE_BACKGROUNDS, HDAvailableBackgroundsPrivate))
-
 struct _HDAvailableBackgroundsPrivate
 {
   GtkListStore *backgrounds_store;
@@ -60,7 +57,7 @@ enum
 
 static guint signals [LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE (HDAvailableBackgrounds, hd_available_backgrounds, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDAvailableBackgrounds, hd_available_backgrounds, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDAvailableBackgrounds));
 
 HDAvailableBackgrounds *
 hd_available_backgrounds_new (void)
@@ -80,7 +77,6 @@ hd_available_backgrounds_class_init (HDAvailableBackgroundsClass *klass)
 
   object_class->dispose = hd_available_backgrounds_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDAvailableBackgroundsPrivate));
 
   signals [SELECTION_CHANGED] = g_signal_new ("selection-changed",
                                               G_TYPE_FROM_CLASS (klass),
@@ -220,7 +216,7 @@ hd_available_backgrounds_init (HDAvailableBackgrounds *backgrounds)
 {
   HDAvailableBackgroundsPrivate *priv;
 
-  priv = backgrounds->priv = HD_AVAILABLE_BACKGROUNDS_GET_PRIVATE (backgrounds);
+  priv = backgrounds->priv = (HDAvailableBackgroundsPrivate*)hd_available_backgrounds_get_instance_private(backgrounds);
 
   priv->backgrounds_store = gtk_list_store_new (HD_BACKGROUND_NUM_COLS,
                                                 G_TYPE_STRING,

@@ -49,9 +49,6 @@
 
 #include "hd-incoming-events.h"
 
-#define HD_INCOMING_EVENTS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_INCOMING_EVENTS, HDIncomingEventsPrivate))
-
 #define NOTIFICATION_GROUP_KEY_DESTINATION "Destination"
 #define NOTIFICATION_GROUP_KEY_TITLE_TEXT "Title-Text"
 #define NOTIFICATION_GROUP_KEY_TITLE_TEXT_EMPTY "Title-Text-Empty"
@@ -158,7 +155,7 @@ enum
 
 static guint incoming_events_signals [LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE (HDIncomingEvents, hd_incoming_events, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDIncomingEvents, hd_incoming_events, G_TYPE_OBJECT, G_ADD_PRIVATE(HDIncomingEvents));
 
 /* Check if category is mapped to a virtual category
  * and returns the virtual category in this case, 
@@ -1210,7 +1207,6 @@ hd_incoming_events_class_init (HDIncomingEventsClass *klass)
                                                                    1,
                                                                    G_TYPE_BOOLEAN);
 
-  g_type_class_add_private (klass, sizeof (HDIncomingEventsPrivate));
 }
 
 static void
@@ -1633,7 +1629,7 @@ hd_incoming_events_init (HDIncomingEvents *ie)
   DBusGConnection *session_connection;
   GError *error = NULL;
 
-  priv = ie->priv = HD_INCOMING_EVENTS_GET_PRIVATE (ie);
+  priv = ie->priv = (HDIncomingEventsPrivate*)hd_incoming_events_get_instance_private(ie);
 
   priv->categories = g_hash_table_new_full (g_str_hash,
                                             g_str_equal,

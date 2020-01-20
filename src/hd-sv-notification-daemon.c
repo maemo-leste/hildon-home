@@ -21,9 +21,6 @@
 #include "hd-sv-notification-daemon.h"
 #include "hd-sv-notification-daemon-glue.h"
 
-#define HD_SV_NOTIFICATION_DAEMON_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_SV_NOTIFICATION_DAEMON, HDSVNotificationDaemonPrivate))
-
 typedef void (* NSVPluginLoad)      (void);
 typedef void (* NSVPluginUnload)    (void);
 typedef gint (* NSVPluginPlayEvent) (GHashTable *hints,
@@ -47,7 +44,7 @@ struct _HDSVNotificationDaemonPrivate
 
 #define MEMLOCK_LIMIT (1024 * 1024 * 64) /* 64 megabytes */
 
-G_DEFINE_TYPE (HDSVNotificationDaemon, hd_sv_notification_daemon, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDSVNotificationDaemon, hd_sv_notification_daemon, G_TYPE_OBJECT, G_ADD_PRIVATE(HDSVNotificationDaemon));
 
 static void
 load_sv_plugin (HDSVNotificationDaemon *sv_nd)
@@ -132,7 +129,7 @@ hd_sv_notification_daemon_init (HDSVNotificationDaemon *sv_nd)
   GError *error = NULL;
   HDSVNotificationDaemonPrivate *priv;
 
-  sv_nd->priv = HD_SV_NOTIFICATION_DAEMON_GET_PRIVATE (sv_nd);
+  sv_nd->priv = (HDSVNotificationDaemonPrivate*)hd_sv_notification_daemon_get_instance_private(sv_nd);
   priv = sv_nd->priv;
 
   connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
@@ -210,7 +207,6 @@ hd_sv_notification_daemon_class_init (HDSVNotificationDaemonClass *klass)
 /*  g_object_class->dispose = hd_sv_notification_daemon_dispose; */
   g_object_class->finalize = hd_sv_notification_daemon_finalize;
 
-  g_type_class_add_private (klass, sizeof (HDSVNotificationDaemonPrivate));
 }
 
 gboolean

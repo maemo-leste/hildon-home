@@ -37,9 +37,6 @@
 
 #include "hd-shortcut-widgets.h"
 
-#define HD_SHORTCUT_WIDGETS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_SHORTCUT_WIDGETS, HDShortcutWidgetsPrivate))
-
 #define TASK_SHORTCUTS_GCONF_KEY "/apps/osso/hildon-home/task-shortcuts"
 
 #define TASK_SHORTCUT_VIEW_GCONF_KEY "/apps/osso/hildon-desktop/applets/TaskShortcut:%s/view"
@@ -94,7 +91,7 @@ static guint shortcut_widgets_signals [LAST_SIGNAL] = { 0 };
 
 static gboolean hd_shortcut_widgets_scan_for_desktop_files (const gchar *directory);
 
-G_DEFINE_TYPE (HDShortcutWidgets, hd_shortcut_widgets, HD_TYPE_WIDGETS);
+G_DEFINE_TYPE_WITH_CODE (HDShortcutWidgets, hd_shortcut_widgets, HD_TYPE_WIDGETS, G_ADD_PRIVATE(HDShortcutWidgets));
 
 /** hd_task_info_free:
  * @info The #HDTaskInfo to free
@@ -638,7 +635,7 @@ hd_shortcut_widgets_init (HDShortcutWidgets *widgets)
   HDShortcutWidgetsPrivate *priv;
 
   /* Install private */
-  widgets->priv = HD_SHORTCUT_WIDGETS_GET_PRIVATE (widgets);
+  widgets->priv = (HDShortcutWidgetsPrivate*)hd_shortcut_widgets_get_instance_private(widgets);
   priv = widgets->priv;
 
   priv->available_tasks = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -865,7 +862,6 @@ hd_shortcut_widgets_class_init (HDShortcutWidgetsClass *klass)
                                                               g_cclosure_marshal_VOID__VOID,
                                                               G_TYPE_NONE, 0);
 
-  g_type_class_add_private (klass, sizeof (HDShortcutWidgetsPrivate));
 }
 
 /* Returns the singleton HDShortcutWidgets instance. Should not be refed or unrefed */

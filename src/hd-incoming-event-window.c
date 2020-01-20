@@ -62,9 +62,6 @@
 /* Timeout in seconds */
 #define INCOMING_EVENT_WINDOW_PREVIEW_TIMEOUT 4
 
-#define HD_INCOMING_EVENT_WINDOW_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_INCOMING_EVENT_WINDOW, HDIncomingEventWindowPrivate))
-
 enum
 {
   PROP_0,
@@ -105,7 +102,7 @@ struct _HDIncomingEventWindowPrivate
   cairo_surface_t *bg_image;
 };
 
-G_DEFINE_TYPE (HDIncomingEventWindow, hd_incoming_event_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE_WITH_CODE (HDIncomingEventWindow, hd_incoming_event_window, GTK_TYPE_WINDOW, G_ADD_PRIVATE(HDIncomingEventWindow));
 
 static gboolean
 hd_incoming_event_window_timeout (HDIncomingEventWindow *window)
@@ -603,7 +600,6 @@ hd_incoming_event_window_class_init (HDIncomingEventWindowClass *klass)
                        "style \"HDIncomingEventWindow-Secondary\" = \"osso-color-themeing\" {\n"
                        "  fg[NORMAL] = @NotificationSecondaryTextColor\n"
                        "} widget \"*.HDIncomingEventWindow-Secondary\" style \"HDIncomingEventWindow-Secondary\"");
-  g_type_class_add_private (klass, sizeof (HDIncomingEventWindowPrivate));
 }
 
 static void
@@ -630,7 +626,7 @@ display_status_changed (HDIncomingEvents      *ie,
 static void
 hd_incoming_event_window_init (HDIncomingEventWindow *window)
 {
-  HDIncomingEventWindowPrivate *priv = HD_INCOMING_EVENT_WINDOW_GET_PRIVATE (window);
+  HDIncomingEventWindowPrivate *priv = (HDIncomingEventWindowPrivate*)hd_incoming_event_window_get_instance_private(window);
   GtkWidget *main_table;
 
   window->priv = priv;

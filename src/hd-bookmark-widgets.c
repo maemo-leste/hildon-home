@@ -38,9 +38,6 @@
 
 #include "hd-bookmark-widgets.h"
 
-#define HD_BOOKMARK_WIDGETS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_BOOKMARK_WIDGETS, HDBookmarkWidgetsPrivate))
-
 #define BOOKMARK_SHORTCUTS_GCONF_KEY "/apps/osso/hildon-home/bookmark-shortcuts"
 
 #define BOOKMARK_EXTENSION_LEN 3
@@ -64,7 +61,7 @@ struct _HDBookmarkWidgetsPrivate
   guint parse_idle_id;
 };
 
-G_DEFINE_TYPE (HDBookmarkWidgets, hd_bookmark_widgets, HD_TYPE_WIDGETS);
+G_DEFINE_TYPE_WITH_CODE (HDBookmarkWidgets, hd_bookmark_widgets, HD_TYPE_WIDGETS, G_ADD_PRIVATE(HDBookmarkWidgets));
 
 static void
 hd_bookmark_widgets_add_bookmark_item (HDBookmarkWidgets *widgets,
@@ -243,7 +240,7 @@ static void
 hd_bookmark_widgets_init (HDBookmarkWidgets *widgets)
 {
   HDBookmarkWidgetsPrivate *priv;
-  widgets->priv = HD_BOOKMARK_WIDGETS_GET_PRIVATE (widgets);
+  widgets->priv = (HDBookmarkWidgetsPrivate*)hd_bookmark_widgets_get_instance_private(widgets);
   priv = widgets->priv;
 
   priv->model = GTK_TREE_MODEL (gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF));
@@ -365,7 +362,6 @@ hd_bookmark_widgets_class_init (HDBookmarkWidgetsClass *klass)
   widgets_class->install_widget = hd_bookmark_widgets_install_widget;
   widgets_class->get_text_column = hd_bookmark_widgets_get_text_column;
 
-  g_type_class_add_private (klass, sizeof (HDBookmarkWidgetsPrivate));
 }
 
 /* Retuns the singleton HDBookmarkWidgets instance. Should not be refed or unrefed */

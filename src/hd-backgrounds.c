@@ -67,9 +67,6 @@
 #define BACKGROUNDS_DESKTOP_KEY_FILE "X-File%u"
 #define BACKGROUNDS_DESKTOP_KEY_FILE_PORTRAIT "X-Portrait-File%u"
 
-#define HD_BACKGROUNDS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_BACKGROUNDS, HDBackgroundsPrivate))
-
 typedef struct
 {
   GFile *file;
@@ -110,7 +107,7 @@ static void cache_image_request_data_free (CacheImageRequestData *data);
 
 static gboolean remove_request (CacheImageRequestData *request);
 
-G_DEFINE_TYPE (HDBackgrounds, hd_backgrounds, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDBackgrounds, hd_backgrounds, G_TYPE_OBJECT, G_ADD_PRIVATE(HDBackgrounds));
 
 static void
 create_cached_background (HDBackgrounds *backgrounds,
@@ -841,7 +838,7 @@ hd_backgrounds_init (HDBackgrounds *backgrounds)
 {
   HDBackgroundsPrivate *priv;
 
-  backgrounds->priv = HD_BACKGROUNDS_GET_PRIVATE (backgrounds);
+  backgrounds->priv = (HDBackgroundsPrivate*)hd_backgrounds_get_instance_private(backgrounds);
   priv = backgrounds->priv;
 
   priv->gconf_client = gconf_client_get_default ();
@@ -907,7 +904,6 @@ hd_backgrounds_class_init (HDBackgroundsClass *klass)
 
   object_class->dispose = hd_backgrounds_dipose;
 
-  g_type_class_add_private (klass, sizeof (HDBackgroundsPrivate));
 }
 
 /* Retuns the singleton HDBackgrounds instance. Should not be refed or unrefed */

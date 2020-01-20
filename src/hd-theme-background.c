@@ -46,9 +46,6 @@ enum
 /* folders */
 #define FOLDER_SHARE_THEMES "/usr/share/themes"
 
-#define HD_THEME_BACKGROUND_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_THEME_BACKGROUND, HDThemeBackgroundPrivate))
-
 static void hd_theme_background_dispose      (GObject *object);
 static void hd_theme_background_get_property (GObject      *object,
                                               guint         prop_id,
@@ -65,7 +62,7 @@ static void theme_loaded (HDImagesetBackground   *background,
                           GAsyncResult           *result,
                           HDAvailableBackgrounds *backgrounds);
 
-G_DEFINE_TYPE (HDThemeBackground, hd_theme_background, HD_TYPE_IMAGESET_BACKGROUND);
+G_DEFINE_TYPE_WITH_CODE (HDThemeBackground, hd_theme_background, HD_TYPE_IMAGESET_BACKGROUND, G_ADD_PRIVATE(HDThemeBackground));
 
 static void
 hd_theme_background_class_init (HDThemeBackgroundClass *klass)
@@ -84,13 +81,12 @@ hd_theme_background_class_init (HDThemeBackgroundClass *klass)
                                                         G_TYPE_FILE,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDThemeBackgroundPrivate));
 }
 
 static void
 hd_theme_background_init (HDThemeBackground *background)
 {
-  background->priv = HD_THEME_BACKGROUND_GET_PRIVATE (background);
+  background->priv = (HDThemeBackgroundPrivate*)hd_theme_background_get_instance_private(background);
 }
 
 HDBackground *

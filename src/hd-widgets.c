@@ -25,20 +25,17 @@
 
 #include "hd-widgets.h"
 
-#define HD_WIDGETS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_WIDGETS, HDWidgetsPrivate))
-
 struct _HDWidgetsPrivate 
 {
   gpointer data;
 };
 
-G_DEFINE_ABSTRACT_TYPE (HDWidgets, hd_widgets, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (HDWidgets, hd_widgets, G_TYPE_OBJECT, G_ADD_PRIVATE(HDWidgets));
 
 static void
 hd_widgets_init (HDWidgets *widgets)
 {
-  widgets->priv = HD_WIDGETS_GET_PRIVATE (widgets);
+  widgets->priv = (HDWidgetsPrivate*)hd_widgets_get_instance_private(widgets);
 }
 
 static void

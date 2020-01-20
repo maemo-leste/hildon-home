@@ -41,9 +41,6 @@
 #include "hd-hildon-home-dbus.h"
 #include "hd-hildon-home-dbus-glue.h"
 
-#define HD_HILDON_HOME_DBUS_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_HILDON_HOME_DBUS, HDHildonHomeDBusPrivate))
-
 struct _HDHildonHomeDBusPrivate
 {
   DBusGConnection *connection;
@@ -63,7 +60,7 @@ struct _HDHildonHomeDBusPrivate
 #define DSME_SIGNAL_INTERFACE "com.nokia.dsme.signal"
 #define DSME_SHUTDOWN_SIGNAL_NAME "shutdown_ind"
 
-G_DEFINE_TYPE (HDHildonHomeDBus, hd_hildon_home_dbus, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDHildonHomeDBus, hd_hildon_home_dbus, G_TYPE_OBJECT, G_ADD_PRIVATE(HDHildonHomeDBus));
 
 static DBusHandlerResult
 hd_hildon_home_system_bus_signal_handler (DBusConnection *conn,
@@ -84,7 +81,7 @@ hd_hildon_home_dbus_init (HDHildonHomeDBus *dbus)
   guint result;
   DBusError derror;
 
-  priv = dbus->priv = HD_HILDON_HOME_DBUS_GET_PRIVATE (dbus);
+  priv = dbus->priv = (HDHildonHomeDBusPrivate*)hd_hildon_home_dbus_get_instance_private(dbus);
 
   dbus->priv->connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 
@@ -190,7 +187,6 @@ hd_hildon_home_dbus_class_init (HDHildonHomeDBusClass *class)
 
   g_object_class->dispose = hd_hildon_home_dbus_dispose;
 
-  g_type_class_add_private (class, sizeof (HDHildonHomeDBusPrivate));
 }
 
 /* Returns the singleton HDHildonHomeDBus instance. Should not be refed un unrefed */

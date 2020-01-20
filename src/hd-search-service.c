@@ -36,9 +36,6 @@
 
 #define TRACKER_QUERY_METHOD          "Query"
 
-#define HD_SEARCH_SERVICE_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_SEARCH_SERVICE, HDSearchServicePrivate))
-
 struct _HDSearchServicePrivate
 {
   DBusGConnection *session_dbus;
@@ -52,7 +49,7 @@ static void query_cb (DBusGProxy         *proxy,
                       DBusGProxyCall     *call,
                       GSimpleAsyncResult *result);
 
-G_DEFINE_TYPE (HDSearchService, hd_search_service, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDSearchService, hd_search_service, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDSearchService));
 
 HDSearchService *
 hd_search_service_new (void)
@@ -72,14 +69,13 @@ hd_search_service_class_init (HDSearchServiceClass *klass)
 
   object_class->dispose = hd_search_service_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDSearchServicePrivate));
 }
 
 static void
 hd_search_service_init (HDSearchService *search_service)
 {
 
-  search_service->priv = HD_SEARCH_SERVICE_GET_PRIVATE (search_service);
+  search_service->priv = (HDSearchServicePrivate*)hd_search_service_get_instance_private(search_service);
 
   init_tracker_proxy (search_service);
 }

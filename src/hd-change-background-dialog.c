@@ -42,9 +42,6 @@
 /* Images folder */
 #define USER_IMAGES_FOLDER "MyDocs", ".images"
 
-#define HD_CHANGE_BACKGROUND_DIALOG_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_CHANGE_BACKGROUND_DIALOG, HDChangeBackgroundDialogPrivate))
-
 enum
 {
   PROP_0,
@@ -67,7 +64,7 @@ struct _HDChangeBackgroundDialogPrivate
   GCancellable *cancellable;
 };
 
-G_DEFINE_TYPE (HDChangeBackgroundDialog, hd_change_background_dialog, GTK_TYPE_DIALOG);
+G_DEFINE_TYPE_WITH_CODE (HDChangeBackgroundDialog, hd_change_background_dialog, GTK_TYPE_DIALOG, G_ADD_PRIVATE(HDChangeBackgroundDialog));
 
 static gboolean
 scroll_to_selected (gpointer data)
@@ -335,10 +332,10 @@ hd_change_background_dialog_response (GtkDialog *dialog,
                                                 priv->current_view,
                                                 priv->cancellable);
 
-            hd_backgrounds_add_done_cb (hd_backgrounds_get (),
-                                        background_set_cb,
-                                        dialog,
-                                        NULL);
+          hd_backgrounds_add_done_cb (hd_backgrounds_get (),
+                                      background_set_cb,
+                                      dialog,
+                                      NULL);
         }
       else
         {
@@ -378,13 +375,12 @@ hd_change_background_dialog_class_init (HDChangeBackgroundDialogClass *klass)
                                                       0,
                                                       G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDChangeBackgroundDialogPrivate));
 }
 
 static void
 hd_change_background_dialog_init (HDChangeBackgroundDialog *dialog)
 {
-  HDChangeBackgroundDialogPrivate *priv = HD_CHANGE_BACKGROUND_DIALOG_GET_PRIVATE (dialog);
+  HDChangeBackgroundDialogPrivate *priv = (HDChangeBackgroundDialogPrivate*)hd_change_background_dialog_get_instance_private(dialog);
   HildonTouchSelectorColumn *column;
   GtkCellRenderer *renderer;
 

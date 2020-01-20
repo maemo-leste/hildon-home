@@ -26,9 +26,6 @@
 
 #include "hd-object-vector.h"
 
-#define HD_OBJECT_VECTOR_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_OBJECT_VECTOR, HDObjectVectorPrivate))
-
 struct _HDObjectVectorPrivate
 {
   GPtrArray *array;
@@ -38,7 +35,7 @@ static void hd_object_vector_dispose (GObject *object);
 
 static void remove_all_objects_from_array (GPtrArray *array);
 
-G_DEFINE_TYPE (HDObjectVector, hd_object_vector, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDObjectVector, hd_object_vector, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDObjectVector));
 
 HDObjectVector *
 hd_object_vector_new (void)
@@ -74,7 +71,6 @@ hd_object_vector_class_init (HDObjectVectorClass *klass)
 
   object_class->dispose = hd_object_vector_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDObjectVectorPrivate));
 }
 
 static void
@@ -82,7 +78,7 @@ hd_object_vector_init (HDObjectVector *object_vector)
 {
   HDObjectVectorPrivate *priv;
 
-  priv = object_vector->priv = HD_OBJECT_VECTOR_GET_PRIVATE (object_vector);
+  priv = object_vector->priv = (HDObjectVectorPrivate*)hd_object_vector_get_instance_private(object_vector);
 
   priv->array = g_ptr_array_new ();
 }

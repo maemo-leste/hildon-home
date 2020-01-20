@@ -28,15 +28,12 @@
 
 #include <gio/gio.h>
 
-#define HD_CAIRO_SURFACE_CACHE_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_CAIRO_SURFACE_CACHE, HDCairoSurfaceCachePrivate))
-
 struct _HDCairoSurfaceCachePrivate
 {
   GHashTable *table;
 };
 
-G_DEFINE_TYPE (HDCairoSurfaceCache, hd_cairo_surface_cache, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (HDCairoSurfaceCache, hd_cairo_surface_cache, G_TYPE_OBJECT, G_ADD_PRIVATE(HDCairoSurfaceCache));
 
 static void
 hd_cairo_surface_cache_dispose (GObject *object)
@@ -56,13 +53,12 @@ hd_cairo_surface_cache_class_init (HDCairoSurfaceCacheClass *klass)
 
   object_class->dispose = hd_cairo_surface_cache_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDCairoSurfaceCachePrivate));
 }
 
 static void
 hd_cairo_surface_cache_init (HDCairoSurfaceCache *cache)
 {
-  HDCairoSurfaceCachePrivate *priv = HD_CAIRO_SURFACE_CACHE_GET_PRIVATE (cache);
+  HDCairoSurfaceCachePrivate *priv = (HDCairoSurfaceCachePrivate*)hd_cairo_surface_cache_get_instance_private(cache);
 
   cache->priv = priv;
 

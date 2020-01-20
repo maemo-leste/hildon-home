@@ -50,9 +50,6 @@ enum
   NUM_COLS
 };
 
-#define HD_ACTIVATE_VIEWS_DIALOG_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_ACTIVATE_VIEWS_DIALOG, HDActivateViewsDialogPrivate))
-
 struct _HDActivateViewsDialogPrivate
 {
   GtkTreeModel *model;
@@ -64,7 +61,7 @@ struct _HDActivateViewsDialogPrivate
   GConfClient  *gconf_client;
 };
 
-G_DEFINE_TYPE (HDActivateViewsDialog, hd_activate_views_dialog, GTK_TYPE_DIALOG);
+G_DEFINE_TYPE_WITH_CODE (HDActivateViewsDialog, hd_activate_views_dialog, GTK_TYPE_DIALOG, G_ADD_PRIVATE(HDActivateViewsDialog));
 
 static void
 hd_activate_views_dialog_dispose (GObject *object)
@@ -172,13 +169,12 @@ hd_activate_views_dialog_class_init (HDActivateViewsDialogClass *klass)
 
   dialog_class->response = hd_activate_views_dialog_response;
 
-  g_type_class_add_private (klass, sizeof (HDActivateViewsDialogPrivate));
 }
 
 static void
 hd_activate_views_dialog_init (HDActivateViewsDialog *dialog)
 {
-  HDActivateViewsDialogPrivate *priv = HD_ACTIVATE_VIEWS_DIALOG_GET_PRIVATE (dialog);
+  HDActivateViewsDialogPrivate *priv = (HDActivateViewsDialogPrivate*)hd_activate_views_dialog_get_instance_private(dialog);
   GtkCellRenderer *renderer;
   guint i;
   GtkWidget *pannable;

@@ -37,9 +37,6 @@
 
 #include "hd-applet-manager.h"
 
-#define HD_APPLET_MANAGER_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_APPLET_MANAGER, HDAppletManagerPrivate))
-
 #define HD_PLUGIN_MANAGER_CONFIG_GROUP "X-PluginManager"
 
 #define ITEMS_KEY_DESKTOP_FILE "X-Desktop-File"
@@ -73,7 +70,7 @@ typedef struct
 static void hd_applet_manager_install_applet_from_desktop_file (HDAppletManager *manager,
                                                                 const gchar     *desktop_file);
 
-G_DEFINE_TYPE (HDAppletManager, hd_applet_manager, HD_TYPE_WIDGETS);
+G_DEFINE_TYPE_WITH_CODE (HDAppletManager, hd_applet_manager, HD_TYPE_WIDGETS, G_ADD_PRIVATE(HDAppletManager));
 
 static void
 hd_plugin_info_free (HDPluginInfo *info)
@@ -373,7 +370,7 @@ static void
 hd_applet_manager_init (HDAppletManager *manager)
 {
   HDAppletManagerPrivate *priv;
-  manager->priv = HD_APPLET_MANAGER_GET_PRIVATE (manager);
+  manager->priv = (HDAppletManagerPrivate*)hd_applet_manager_get_instance_private(manager);
   priv = manager->priv;
 
   priv->plugin_manager = hd_plugin_manager_new (hd_config_file_new_with_defaults ("home.conf"));
@@ -510,7 +507,6 @@ hd_applet_manager_class_init (HDAppletManagerClass *klass)
   widgets_class->install_widget = hd_applet_manager_install_widget;
   widgets_class->get_text_column = hd_applet_manager_get_text_column;
 
-  g_type_class_add_private (klass, sizeof (HDAppletManagerPrivate));
 }
 
 /* Retuns the singleton HDAppletManager instance. Should not be refed or unrefed */

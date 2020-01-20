@@ -26,9 +26,6 @@
 
 #include "hd-install-widgets-dialog.h"
 
-#define HD_INSTALL_WIDGETS_DIALOG_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_INSTALL_WIDGETS_DIALOG, HDInstallWidgetsDialogPrivate))
-
 struct _HDInstallWidgetsDialogPrivate
 {
   GtkWidget *selector;
@@ -42,7 +39,7 @@ enum
   PROP_WIDGETS,
 };
 
-G_DEFINE_TYPE (HDInstallWidgetsDialog, hd_install_widgets_dialog, HILDON_TYPE_PICKER_DIALOG);
+G_DEFINE_TYPE_WITH_CODE (HDInstallWidgetsDialog, hd_install_widgets_dialog, HILDON_TYPE_PICKER_DIALOG, G_ADD_PRIVATE(HDInstallWidgetsDialog));
 
 static void
 hd_install_widgets_dialog_response (GtkDialog *dialog,
@@ -166,13 +163,12 @@ hd_install_widgets_dialog_class_init (HDInstallWidgetsDialogClass *klass)
                                                         HD_TYPE_WIDGETS,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (HDInstallWidgetsDialogPrivate));
 }
 
 static void
 hd_install_widgets_dialog_init (HDInstallWidgetsDialog *dialog)
 {
-  dialog->priv = HD_INSTALL_WIDGETS_DIALOG_GET_PRIVATE (dialog);
+  dialog->priv = (HDInstallWidgetsDialogPrivate*)hd_install_widgets_dialog_get_instance_private(dialog);
 }
 
 GtkWidget *

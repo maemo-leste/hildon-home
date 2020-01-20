@@ -39,9 +39,6 @@
 
 #include "hd-edit-mode-menu.h"
 
-#define HD_EDIT_MODE_MENU_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_EDIT_MODE_MENU, HDEditModeMenuPrivate))
-
 struct _HDEditModeMenuPrivate
 {
   DBusGProxy      *contact_proxy;
@@ -59,7 +56,7 @@ struct _HDEditModeMenuPrivate
 #define CONTACT_DBUS_ADD_SHORTCUT "add_shortcut"
 #define CONTACT_DBUS_CAN_ADD_SHORTCUT "can_add_shortcut"
 
-G_DEFINE_TYPE (HDEditModeMenu, hd_edit_mode_menu, HILDON_TYPE_APP_MENU);
+G_DEFINE_TYPE_WITH_CODE (HDEditModeMenu, hd_edit_mode_menu, HILDON_TYPE_APP_MENU, G_ADD_PRIVATE(HDEditModeMenu));
 
 static void
 hd_edit_mode_menu_dispose (GObject *object)
@@ -176,7 +173,6 @@ hd_edit_mode_menu_class_init (HDEditModeMenuClass *klass)
 
   widget_class->show = hd_edit_mode_menu_show;
 
-  g_type_class_add_private (klass, sizeof (HDEditModeMenuPrivate));
 }
 
 static void
@@ -243,7 +239,7 @@ hd_edit_mode_menu_init (HDEditModeMenu *menu)
   DBusGConnection *connection;
   GError *error = NULL;
 
-  menu->priv = HD_EDIT_MODE_MENU_GET_PRIVATE (menu);
+  menu->priv = (HDEditModeMenuPrivate*)hd_edit_mode_menu_get_instance_private(menu);
   priv = menu->priv;
 
   priv->shortcuts_button = gtk_button_new_with_label (dgettext (GETTEXT_PACKAGE,

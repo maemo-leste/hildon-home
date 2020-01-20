@@ -26,9 +26,6 @@
 
 #include "hd-multi-map.h"
 
-#define HD_MULTI_MAP_GET_PRIVATE(object) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((object), HD_TYPE_MULTI_MAP, HDMultiMapPrivate))
-
 struct _HDMultiMapPrivate
 {
   GHashTable *map;
@@ -42,7 +39,7 @@ static GList *remove_value_from_list (GList   *list,
 static void remove_and_free_all_keys_and_values (GHashTable *map);
 static void free_values_list (GList *list);
 
-G_DEFINE_TYPE (HDMultiMap, hd_multi_map, G_TYPE_INITIALLY_UNOWNED);
+G_DEFINE_TYPE_WITH_CODE (HDMultiMap, hd_multi_map, G_TYPE_INITIALLY_UNOWNED, G_ADD_PRIVATE(HDMultiMap));
 
 HDMultiMap *
 hd_multi_map_new (void)
@@ -62,7 +59,6 @@ hd_multi_map_class_init (HDMultiMapClass *klass)
 
   object_class->dispose = hd_multi_map_dispose;
 
-  g_type_class_add_private (klass, sizeof (HDMultiMapPrivate));
 }
 
 static void
@@ -70,7 +66,7 @@ hd_multi_map_init (HDMultiMap *multi_map)
 {
   HDMultiMapPrivate *priv;
 
-  priv = multi_map->priv = HD_MULTI_MAP_GET_PRIVATE (multi_map);
+  priv = multi_map->priv = (HDMultiMapPrivate*)hd_multi_map_get_instance_private(multi_map);
 
   priv->map = g_hash_table_new_full (g_direct_hash,
                                      g_direct_equal,
