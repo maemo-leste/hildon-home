@@ -57,8 +57,6 @@ hd_widgets_class_init (HDWidgetsClass *klass)
 
   object_class->dispose = hd_widgets_dispose;
   object_class->finalize = hd_widgets_finalize;
-
-  g_type_class_add_private (klass, sizeof (HDWidgetsPrivate));
 }
 
 const gchar *
