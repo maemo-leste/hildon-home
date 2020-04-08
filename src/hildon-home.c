@@ -49,7 +49,7 @@
 #define HD_STAMP_DIR   "/tmp/hildon-desktop/"
 #define HD_HOME_STAMP_FILE HD_STAMP_DIR "hildon-home.stamp"
 
-#define OPERATOR_APPLET_MODULE_PATH "/usr/lib/hildon-desktop/connui-cellular-operator-home-item.so"
+#define OPERATOR_APPLET_MODULE_PATH HD_DESKTOP_LIB_PATH "/connui-cellular-operator-home-item.so"
 #define OPERATOR_APPLET_PLUGIN_ID "_HILDON_OPERATOR_APPLET"
 
 #define HD_GCONF_DIR_HILDON_HOME "/apps/osso/hildon-home"

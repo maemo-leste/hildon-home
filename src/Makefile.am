@@ -11,6 +11,7 @@ bin_PROGRAMS = hildon-home hildon-sv-notification-daemon
 hildon_home_CFLAGS = \
 	$(HILDON_HOME_CFLAGS)							\
 	-DHD_DESKTOP_CONFIG_PATH=\"$(hildondesktopconfdir)\"			\
+	-DHD_DESKTOP_LIB_PATH=\"$(hildondesktoplibdir)\"			\
 	-D_XOPEN_SOURCE=500							\
 	-DHD_APPLICATIONS_DIR=\"$(datadir)/applications/hildon\"		\
 	-DHD_USER_APPLICATIONS_DIR=\"/home/user/.local/share/applications/hildon\"		\
