@@ -9,3 +9,7 @@ services_DATA = \
 notificationdirdir = $(hildonnotificationdesktopentrydir)
 notificationdir_DATA = \
 		.empty
+
+homedesktopdirdir = $(hildonhomedesktopentrydir)
+homedesktopdir_DATA = \
+		.empty
