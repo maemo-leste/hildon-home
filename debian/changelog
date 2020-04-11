@@ -1,3 +1,10 @@
+hildon-home (0.3.75) unstable; urgency=medium
+
+  * Prevent wakeups from hildon-home by ensuring
+    /usr/share/applications/hildon-home exists
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 11 Apr 2020 16:56:06 +0200
+
 hildon-home (0.3.74) unstable; urgency=medium
 
   * Fix loading of operator applet
