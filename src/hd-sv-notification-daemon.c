@@ -40,7 +40,7 @@ struct _HDSVNotificationDaemonPrivate
 #define HD_SV_NOTIFICATION_DAEMON_DBUS_NAME  "com.nokia.HildonSVNotificationDaemon" 
 #define HD_SV_NOTIFICATION_DAEMON_DBUS_PATH  "/com/nokia/HildonSVNotificationDaemon"
 
-#define HILDON_NOTIFY_SV_PLUGIN_PATH "/usr/lib/hildon-desktop/libhildon-plugins-notify-sv.so"
+#define HILDON_NOTIFY_SV_PLUGIN_PATH HD_DESKTOP_LIB_PATH "/libhildon-plugins-notify-sv.so"
 
 #define MEMLOCK_LIMIT (1024 * 1024 * 64) /* 64 megabytes */
 
