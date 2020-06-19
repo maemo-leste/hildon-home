@@ -1,3 +1,9 @@
+hildon-home (0.3.76) unstable; urgency=medium
+
+  * Use proper library path for libhildon-plugins-notify-sv.so
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Fri, 19 Jun 2020 10:58:30 +0200
+
 hildon-home (0.3.75) unstable; urgency=medium
 
   * Prevent wakeups from hildon-home by ensuring
