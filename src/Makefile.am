@@ -132,6 +132,7 @@ hildon_home_LDFLAGS = \
 	$(MAEMO_LAUNCHER_LIBS)
 
 hildon_sv_notification_daemon_CFLAGS = \
+	-DHD_DESKTOP_LIB_PATH=\"$(hildondesktoplibdir)\" \
 	$(HILDON_SV_NOTIFICATION_DAEMON_CFLAGS)
 
 hildon_sv_notification_daemon_LDFLAGS = \
