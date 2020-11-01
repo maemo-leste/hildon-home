@@ -1,3 +1,9 @@
+hildon-home (0.3.77) unstable; urgency=medium
+
+  * Make sure libtool does not interfere with maemo-launcher linker flags
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Sun, 01 Nov 2020 13:05:53 +0200
+
 hildon-home (0.3.76) unstable; urgency=medium
 
   * Use proper library path for libhildon-plugins-notify-sv.so
