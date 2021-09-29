@@ -98,7 +98,8 @@ gboolean               hd_notification_manager_get_capabilities      (HDNotifica
 gboolean               hd_notification_manager_get_server_info       (HDNotificationManager *nm,
                                                                       gchar                **out_name,
                                                                       gchar                **out_vendor,
-                                                                      gchar                **out_version);
+                                                                      gchar                **out_version,
+                                                                      gchar                **out_spec_ver);
 
 gboolean               hd_notification_manager_close_notification    (HDNotificationManager *nm,
                                                                       guint id, 
