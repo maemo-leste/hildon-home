@@ -1,3 +1,9 @@
+hildon-home (0.3.78) unstable; urgency=medium
+
+  * org.freedesktop.Notifications: correctly implement GetServerInformation
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Wed, 29 Sep 2021 16:13:11 +0300
+
 hildon-home (0.3.77) unstable; urgency=medium
 
   * Make sure libtool does not interfere with maemo-launcher linker flags
