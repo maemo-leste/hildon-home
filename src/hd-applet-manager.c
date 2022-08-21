@@ -164,6 +164,7 @@ items_configuration_loaded_cb (HDPluginConfiguration *configuration,
   /* Clear displayed applets */
   g_hash_table_remove_all (priv->displayed_applets);
   g_hash_table_remove_all (priv->used_ids);
+  g_hash_table_remove_all (priv->installed);
 
   /* Iterate over all groups and get all displayed applets */
   groups = g_key_file_get_groups (key_file, NULL);
