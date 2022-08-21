@@ -1199,6 +1199,15 @@ idle_emit (gpointer data)
   return FALSE;
 }
 
+static gboolean
+idle_update (gpointer data)
+{
+  hd_notification_updated (data);
+  g_object_unref (data);
+
+  return FALSE;
+}
+
 gboolean
 hd_notification_manager_notify (HDNotificationManager *nm,
                                 const gchar           *app_name,
@@ -1343,6 +1352,8 @@ hd_notification_manager_notify (HDNotificationManager *nm,
                     "summary", summary,
                     "body", body,
                     NULL);
+
+      gdk_threads_add_idle (idle_update, g_object_ref (notification));
 
       if (persistent)
         {

@@ -619,6 +619,17 @@ switcher_window_response (HDIncomingEventWindow *window,
 }
 
 static void
+switcher_window_updated(HDNotification *notification,
+                        GtkWidget      *switcher_window)
+{
+  g_object_set(switcher_window,
+               "title", hd_notification_get_summary (notification),
+               "message", hd_notification_get_body (notification),
+               "icon", hd_notification_get_icon (notification),
+               NULL);
+}
+
+static void
 notifications_update_switcher_window (Notifications *ns,
                                       GtkWidget     *window)
 {
@@ -786,6 +797,9 @@ notifications_add_to_switcher (Notifications *ns)
       g_signal_connect_object (notification, "closed",
                                G_CALLBACK (gtk_widget_destroy), switcher_window,
                                G_CONNECT_SWAPPED);
+      g_signal_connect_object (notification, "updated",
+                               G_CALLBACK (switcher_window_updated),
+                               switcher_window, 0);
 
       gtk_widget_show (switcher_window);
     }
