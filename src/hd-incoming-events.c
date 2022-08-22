@@ -823,7 +823,11 @@ preview_window_response (HDIncomingEventWindow *window,
         notifications_add_to_switcher (ns);
     }
   else if (response_id == GTK_RESPONSE_DELETE_EVENT)
-    notifications_add_to_switcher (ns);
+    {
+      ns->cb = NULL;
+      ns->cb_data = NULL;
+      notifications_add_to_switcher (ns);
+    }
   else
     g_warning ("%s. Unexpected response id: %d", __FUNCTION__, response_id);
 
