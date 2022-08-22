@@ -435,6 +435,123 @@ hd_incoming_event_window_get_property (GObject      *object,
     }
 }
 
+static gboolean
+is_tag_supported(const gchar *tag)
+{
+  return
+      !g_strcmp0 (tag, "b") || !g_strcmp0 (tag, "u") || !g_strcmp0 (tag, "i");
+}
+
+static void
+start_element_handler(GMarkupParseContext *context,
+                      const gchar         *element_name,
+                      const gchar        **attribute_names,
+                      const gchar        **attribute_values,
+                      gpointer             user_data,
+                      GError             **error)
+{
+  GString *s = (GString *)user_data;
+
+  if (is_tag_supported (element_name))
+    g_string_append_printf (s, "<%s>", element_name);
+  else if (!g_strcmp0 (element_name, "a"))
+    g_string_append_printf (s, "<span foreground='blue' underline='single'>");
+  else if (!g_strcmp0 (element_name, "img"))
+    {
+      const gchar *src = NULL;
+      const gchar *alt = NULL;
+      int i;
+
+      for (i = 0; attribute_names[i]; i++)
+        {
+          if (!g_strcmp0 (attribute_names[i], "alt"))
+            {
+              alt = attribute_values[i];
+              break;
+            }
+          else if (!g_strcmp0 (attribute_names[i], "src"))
+              src = attribute_values[i];
+        }
+
+      if (alt)
+        g_string_append_printf (s, "%s", alt);
+      else if (src)
+        g_string_append_printf (s, "%s", src);
+    }
+}
+
+static void
+end_element_handler(GMarkupParseContext *context,
+                    const gchar         *element_name,
+                    gpointer             user_data,
+                    GError             **error)
+{
+  GString *s = (GString *)user_data;
+
+  if (is_tag_supported (element_name))
+    g_string_append_printf (s, "</%s>", element_name);
+  else if (!g_strcmp0 (element_name, "a"))
+    g_string_append_printf (s, "</span>");
+}
+
+static void
+text_handler(GMarkupParseContext *context,
+             const gchar         *text,
+             gsize                text_len,
+             gpointer             user_data,
+             GError             **error)
+{
+  GString *s = (GString *)user_data;
+  const gchar *element_name = g_markup_parse_context_get_element (context);
+
+  if (is_tag_supported (element_name) ||
+      !g_strcmp0 (element_name, "markup") ||
+      !g_strcmp0 (element_name, "a"))
+    {
+      g_string_append_len (s, text, text_len);
+    }
+}
+
+static void
+hd_incoming_event_window_set_message_markup (HDIncomingEventWindow *window,
+                                             const gchar            *msg)
+{
+  HDIncomingEventWindowPrivate *priv = window->priv;
+  GMarkupParser parser =
+  {
+    start_element_handler,
+    end_element_handler,
+    text_handler,
+    NULL,
+    NULL
+  };
+  GString *s = g_string_new ("");
+  GError *error = NULL;
+  gchar *str = g_strconcat ("<markup>", msg ? msg : "", "<markup/>", NULL);
+  GMarkupParseContext *ctx = g_markup_parse_context_new (&parser, 0, s, NULL);
+
+  g_markup_parse_context_parse (ctx, str, strlen(str), &error);
+  g_free (str);
+  g_markup_parse_context_free (ctx);
+
+  if (!error && pango_parse_markup (s->str, -1, 0, NULL, NULL, NULL, NULL))
+    {
+      msg = s->str;
+      gtk_label_set_markup (GTK_LABEL (priv->message), msg);
+    }
+  else
+      gtk_label_set_text (GTK_LABEL (priv->message), msg);
+
+  if (error)
+    g_error_free (error);
+
+  hd_incoming_event_window_set_string_xwindow_property (
+                      GTK_WIDGET (window),
+                      "_HILDON_INCOMING_EVENT_NOTIFICATION_MESSAGE",
+                      msg);
+  g_string_free (s, TRUE);
+}
+
 static void
 hd_incoming_event_window_set_property (GObject      *object,
                                        guint         prop_id,
@@ -499,11 +616,8 @@ hd_incoming_event_window_set_property (GObject      *object,
       break;
 
     case PROP_MESSAGE:
-      gtk_label_set_text (GTK_LABEL (priv->message), g_value_get_string (value));
-      hd_incoming_event_window_set_string_xwindow_property (
-                          GTK_WIDGET (object),
-                          "_HILDON_INCOMING_EVENT_NOTIFICATION_MESSAGE",
-                          g_value_get_string (value));
+      hd_incoming_event_window_set_message_markup (HD_INCOMING_EVENT_WINDOW (object),
+                                                   g_value_get_string (value));
       break;
 
     default:
