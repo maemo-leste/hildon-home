@@ -1514,7 +1514,7 @@ hd_notification_manager_get_server_info (HDNotificationManager *nm,
   *out_name     = g_strdup ("Hildon Desktop Notification Manager");
   *out_vendor   = g_strdup ("Nokia");
   *out_version  = g_strdup (VERSION);
-  *out_spec_ver = g_strdup ("0.9");
+  *out_spec_ver = g_strdup ("1.0");
 
   return TRUE;
 }
