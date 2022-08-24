@@ -1,3 +1,9 @@
+hildon-home (0.3.79) unstable; urgency=medium
+
+  * Properly implement org.freedesktop.Notifications
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Wed, 24 Aug 2022 15:16:53 +0300
+
 hildon-home (0.3.78) unstable; urgency=medium
 
   * org.freedesktop.Notifications: correctly implement GetServerInformation
