@@ -1,26 +1,16 @@
 #!/usr/bin/make -f
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/cdbs/1/class/gnome.mk
+%:
+	dh $@
 
 ifeq (,$(findstring nolauncher,$(DEB_BUILD_OPTIONS)))
-DEB_CONFIGURE_EXTRA_FLAGS = --enable-maemo-launcher
+ENABLE_LAUNCHER += --enable-maemo-launcher
 endif
 
-DEB_DH_INSTALLCHANGELOGS_ARGS=--no-act
-DEB_DH_INSTALLDOCS_ARGS=--no-act
-DEB_INSTALL_DOCS_ALL=
-
-makebuilddir::
-	AUTOGEN_SUBDIR_MODE=1 NOCONFIGURE=yes ./autogen.sh
-
-install/hildon-home::
-	install -d $(CURDIR)/debian/tmp/etc/X11/Xsession.d
-	install -m755 $(CURDIR)/debian/hildon-sv-notification-daemon.xsession \
-		$(CURDIR)/debian/tmp/etc/X11/Xsession.d/65hildon-sv-notification-daemon
-
-binary-install/hildon-home::
+override_dh_install:
+	dh_install
+	dh_maemolauncher
 	dh_installxsession -u 'post 18'
+	dh_installxsession -u 'pre 65' --init-script='hildon-sv-notification-daemon'
 	dh_maemolauncher
 
 binary-predeb/hildon-home::

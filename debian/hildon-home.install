@@ -1,9 +1,8 @@
-debian/tmp/etc/hildon-desktop/*.conf
-debian/tmp/etc/hildon-desktop/*.plugins
-debian/tmp/etc/hildon-desktop/*.safe-set
-debian/tmp/etc/X11/Xsession.d/
-debian/tmp/usr/share/dbus-1/services/*.service
-debian/tmp/usr/bin/hildon-home
-debian/tmp/usr/bin/hildon-sv-notification-daemon
-debian/tmp/usr/share/applications/hildon-notification/.empty
-debian/tmp/usr/share/applications/hildon-home/.empty
+debian/hildon-home/etc/hildon-desktop/*.conf
+debian/hildon-home/etc/hildon-desktop/*.plugins
+debian/hildon-home/etc/hildon-desktop/*.safe-set
+debian/hildon-home/usr/share/dbus-1/services/*.service
+debian/hildon-home/usr/bin/hildon-home
+debian/hildon-home/usr/bin/hildon-sv-notification-daemon
+debian/hildon-home/usr/share/applications/hildon-notification/.empty
+debian/hildon-home/usr/share/applications/hildon-home/.empty
