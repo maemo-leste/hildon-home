@@ -6,6 +6,11 @@ ifeq (,$(findstring nolauncher,$(DEB_BUILD_OPTIONS)))
 ENABLE_LAUNCHER += --enable-maemo-launcher
 endif
 
+CONFFLAGS += $(ENABLE_LAUNCHER)
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(CONFFLAGS)
+
 override_dh_install:
 	dh_install
 	dh_maemolauncher
