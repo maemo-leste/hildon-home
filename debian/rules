@@ -16,7 +16,6 @@ override_dh_install:
 	dh_maemolauncher
 	dh_installxsession -u 'post 18'
 	dh_installxsession -u 'pre 65' --init-script='hildon-sv-notification-daemon'
-	dh_maemolauncher
 
 binary-predeb/hildon-home::
 	# set the Setuid bit for hildon-notification-daemon
