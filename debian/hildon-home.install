@@ -1,8 +1,0 @@
-debian/hildon-home/etc/hildon-desktop/*.conf
-debian/hildon-home/etc/hildon-desktop/*.plugins
-debian/hildon-home/etc/hildon-desktop/*.safe-set
-debian/hildon-home/usr/share/dbus-1/services/*.service
-debian/hildon-home/usr/bin/hildon-home
-debian/hildon-home/usr/bin/hildon-sv-notification-daemon
-debian/hildon-home/usr/share/applications/hildon-notification/.empty
-debian/hildon-home/usr/share/applications/hildon-home/.empty
