@@ -419,7 +419,7 @@ hd_incoming_event_window_get_property (GObject      *object,
       break;
 
     case PROP_TIME:
-      g_value_set_long (value, priv->time);
+      g_value_set_int64 (value, priv->time);
       break;
 
     case PROP_AMOUNT:
@@ -593,7 +593,7 @@ hd_incoming_event_window_set_property (GObject      *object,
       break;
 
     case PROP_TIME:
-      priv->time = g_value_get_long (value);
+      priv->time = g_value_get_int64 (value);
       if (!priv->preview && hd_incoming_events_get_display_on ())
         hd_incoming_event_window_update_time (HD_INCOMING_EVENT_WINDOW (object));
       break;
@@ -681,13 +681,13 @@ hd_incoming_event_window_class_init (HDIncomingEventWindowClass *klass)
                                                         G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_TIME,
-                                   g_param_spec_long ("time",
-                                                      "Time",
-                                                      "The time of the incoming event (time_t)",
-                                                      G_MINLONG,
-                                                      G_MAXLONG,
-                                                      -1,
-                                                      G_PARAM_READWRITE));
+                                   g_param_spec_int64 ("time",
+                                                       "Time",
+                                                       "The time of the incoming event (time_t)",
+                                                       G_MININT64,
+                                                       G_MAXINT64,
+                                                       -1,
+                                                       G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_AMOUNT,
@@ -838,7 +838,7 @@ hd_incoming_event_window_new (gboolean     preview,
                          "title", summary,
                          "message", body,
                          "icon", icon,
-                         "time", time,
+                         "time", (gint64)time,
                          NULL);
 
   return window;
