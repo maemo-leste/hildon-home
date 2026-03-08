@@ -1,3 +1,9 @@
+hildon-home (0.3.80) unstable; urgency=medium
+
+  * use gint64 to represent time_t
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Sun, 08 Mar 2026 08:59:24 +0200
+
 hildon-home (0.3.79) unstable; urgency=medium
 
   * Properly implement org.freedesktop.Notifications
