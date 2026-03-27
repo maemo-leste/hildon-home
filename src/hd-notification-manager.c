@@ -62,6 +62,7 @@
 #define DB_BIND_FLOAT(val)              G_TYPE_FLOAT,   val
 #define DB_BIND_UCHAR(val)              G_TYPE_UCHAR,   val
 #define DB_BIND_INT64(val)              G_TYPE_INT64,   val
+#define DB_BIND_BOOLEAN(val)            G_TYPE_BOOLEAN,   val
 #define DB_BIND_END                     G_TYPE_INVALID
 
 enum {
@@ -129,6 +130,7 @@ enum
   HD_NM_HINT_TYPE_FLOAT,
   HD_NM_HINT_TYPE_UCHAR,
   HD_NM_HINT_TYPE_INT64,
+  HD_NM_HINT_TYPE_BOOLEAN,
 };
 
 static void                            
@@ -447,6 +449,9 @@ hd_notification_manager_db_bind_params (sqlite3_stmt *stmt, ...)
     else if (type == G_TYPE_UCHAR)
       /* Same for guchar -> int. */
       ret = sqlite3_bind_int (stmt, i, va_arg (types, gint));
+    else if (type == G_TYPE_BOOLEAN)
+      /* Same for bool -> int. */
+      ret = sqlite3_bind_int (stmt, i, va_arg (types, gint));
     else
       g_assert_not_reached();
   va_end (types);
@@ -682,6 +687,12 @@ hd_notification_manager_db_insert_hint (gpointer key, gpointer value,
       hinfo->result = hd_notification_manager_db_bind_params (hinfo->stmt,
              DB_BIND_STR (hkey), DB_BIND_INT (HD_NM_HINT_TYPE_UCHAR),
              DB_BIND_UCHAR (g_value_get_uchar (hvalue)),
+             DB_BIND_INT (hinfo->id), DB_BIND_END);
+      break;
+    case G_TYPE_BOOLEAN:
+      hinfo->result = hd_notification_manager_db_bind_params (hinfo->stmt,
+             DB_BIND_STR (hkey), DB_BIND_INT (HD_NM_HINT_TYPE_BOOLEAN),
+             DB_BIND_BOOLEAN (g_value_get_boolean (hvalue)),
              DB_BIND_INT (hinfo->id), DB_BIND_END);
       break;
     default:
@@ -1241,7 +1252,8 @@ hd_notification_manager_notify (HDNotificationManager *nm,
   /* Do not be persistent when "no-notification-window" is used */
   hint = g_hash_table_lookup (hints, "no-notification-window");
   if ((G_VALUE_HOLDS_BOOLEAN (hint) && g_value_get_boolean (hint)) ||
-      (G_VALUE_HOLDS_UCHAR (hint) && g_value_get_uchar (hint)))
+      (G_VALUE_HOLDS_UCHAR (hint) && g_value_get_uchar (hint)) ||
+      (G_VALUE_HOLDS_INT (hint) && g_value_get_int(hint)))
     persistent = FALSE;
 
   /* Get "category" hint */
